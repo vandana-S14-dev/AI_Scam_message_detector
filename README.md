@@ -147,6 +147,13 @@ Deployed using Streamlit Cloud
 - Add voice scam detection
 - Mobile app integration
 
+🚀 Live Demo
+s
+👉 Try the app here:  
+[Click to Open Live App](https://aiscammessagedetector-f2vl26dlisp9vfycvrmvtw.streamlit.app/)
+
+🕵️ AI Scam Detection System detects phishing messages using RAG + LLM agents.
+
 👩‍💻 Author
 
 Vandana S
