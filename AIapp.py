@@ -9,12 +9,13 @@ import json
 import re
 
 def extract_json(text):
-    try:
-        match = re.search(r"\{.*\}", text, re.DOTALL)
-        if match:
+
+    match = re.search(r"\{.*\}", text, re.DOTALL)
+    if match:
+        try:
             return json.loads(match.group())
-    except:
-        pass
+        except:
+            return None
     return None
 
 # -----------------------------
@@ -90,18 +91,16 @@ Return bullet points starting with '-'
 
 def risk_agent(patterns):
     prompt = f"""
-You are a security classifier.
+Return ONLY valid JSON.
 
-If patterns show no scam → risk must be LOW.
+No explanation. No text.
 
-Return ONLY JSON:
-
-{{"risk_score": number, "label": "Low/Medium/High"}}
-
-Rules:
-- No scam → score < 30
-- Suspicious → 30-70
-- Clear scam → > 70
+Format exactly:
+{{
+  "risk_score": 0-100,
+  "label": "Low" | "Medium" | "High",
+  "reasons": ["reason1", "reason2"]
+}}
 
 Patterns:
 {patterns}
@@ -142,6 +141,16 @@ def run_agents(text):
 
     pattern = pattern_agent(text, context_str)
     risk = risk_agent(pattern)
+
+    risk_json = extract_json(risk)
+
+    if risk_json:
+        score = int(risk_json.get("risk_score", 0))
+        label = risk_json.get("label", "Low")
+    else:
+        score = 0
+        label = "Error"
+
     reasoning = reasoning_agent(text, pattern)
     advice = advice_agent(risk)
 
